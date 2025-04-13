@@ -164,5 +164,37 @@ private void DeleteFlightButton_Click(object sender, EventArgs e)
 
     LoadFlights();  // إعادة تحميل الرحلات بعد الحذف
 }
+using ClosedXML.Excel;
+using System.IO;
+
+private void ExportToExcelButton_Click(object sender, EventArgs e)
+{
+    using (var db = new AppDbContext())
+    {
+        var aircrafts = db.Aircrafts.ToList();
+        var workbook = new XLWorkbook();
+        var worksheet = workbook.AddWorksheet("Aircrafts");
+
+        worksheet.Cell(1, 1).Value = "Aircraft Number";
+        worksheet.Cell(1, 2).Value = "Model";
+        worksheet.Cell(1, 3).Value = "Capacity";
+        worksheet.Cell(1, 4).Value = "Manufacturer";
+
+        int row = 2;
+        foreach (var aircraft in aircrafts)
+        {
+            worksheet.Cell(row, 1).Value = aircraft.AircraftNumber;
+            worksheet.Cell(row, 2).Value = aircraft.Model;
+            worksheet.Cell(row, 3).Value = aircraft.Capacity;
+            worksheet.Cell(row, 4).Value = aircraft.Manufacturer;
+            row++;
+        }
+
+        var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Aircrafts.xlsx");
+        workbook.SaveAs(filePath);
+        MessageBox.Show($"Data exported to {filePath}");
+    }
+}
+
 
 
