@@ -87,3 +87,82 @@ namespace AirportManagementSystem
         }
     }
 }
+
+private void UpdateAircraftButton_Click(object sender, EventArgs e)
+{
+    // تعديل الطائرة بناءً على الرقم التسلسلي
+    var selectedAircraft = AircraftListBox.SelectedItem.ToString();
+    var aircraftNumber = selectedAircraft.Split(',')[0].Split(':')[1].Trim();
+
+    using (var db = new AppDbContext())
+    {
+        var aircraft = db.Aircrafts.FirstOrDefault(a => a.AircraftNumber == aircraftNumber);
+        if (aircraft != null)
+        {
+            aircraft.Model = ModelTextBox.Text;  // تعديل النموذج
+            aircraft.Capacity = int.Parse(CapacityTextBox.Text);  // تعديل السعة
+            aircraft.Manufacturer = ManufacturerTextBox.Text;  // تعديل الشركة المصنعة
+            db.SaveChanges();
+        }
+    }
+
+    LoadAircrafts();  // إعادة تحميل الطائرات
+}
+
+private void DeleteAircraftButton_Click(object sender, EventArgs e)
+{
+    var selectedAircraft = AircraftListBox.SelectedItem.ToString();
+    var aircraftNumber = selectedAircraft.Split(',')[0].Split(':')[1].Trim();
+
+    using (var db = new AppDbContext())
+    {
+        var aircraft = db.Aircrafts.FirstOrDefault(a => a.AircraftNumber == aircraftNumber);
+        if (aircraft != null)
+        {
+            db.Aircrafts.Remove(aircraft);
+            db.SaveChanges();
+        }
+    }
+
+    LoadAircrafts();  // إعادة تحميل الطائرات بعد الحذف
+}
+
+private void UpdateFlightButton_Click(object sender, EventArgs e)
+{
+    var selectedFlight = FlightsListBox.SelectedItem.ToString();
+    var flightNumber = selectedFlight.Split(',')[0].Split(':')[1].Trim();
+
+    using (var db = new AppDbContext())
+    {
+        var flight = db.Flights.FirstOrDefault(f => f.FlightNumber == flightNumber);
+        if (flight != null)
+        {
+            flight.Origin = OriginTextBox.Text;  // تعديل مكان الإقلاع
+            flight.Destination = DestinationTextBox.Text;  // تعديل مكان الوصول
+            flight.DepartureTime = DepartureTimePicker.Value;  // تعديل وقت الإقلاع
+            db.SaveChanges();
+        }
+    }
+
+    LoadFlights();  // إعادة تحميل الرحلات بعد التعديل
+}
+
+private void DeleteFlightButton_Click(object sender, EventArgs e)
+{
+    var selectedFlight = FlightsListBox.SelectedItem.ToString();
+    var flightNumber = selectedFlight.Split(',')[0].Split(':')[1].Trim();
+
+    using (var db = new AppDbContext())
+    {
+        var flight = db.Flights.FirstOrDefault(f => f.FlightNumber == flightNumber);
+        if (flight != null)
+        {
+            db.Flights.Remove(flight);
+            db.SaveChanges();
+        }
+    }
+
+    LoadFlights();  // إعادة تحميل الرحلات بعد الحذف
+}
+
+
